@@ -8,7 +8,6 @@ PROGRAM main
     IMPLICIT NONE
     ! Déclaration des variables locales
     integer :: i, j
-    real(8) :: test
 
 
                     ! ------------------------------ !
@@ -86,7 +85,6 @@ PROGRAM main
         ! end do
 
 
-        test = f(x_c(1), y_c(1))
 
 
         
