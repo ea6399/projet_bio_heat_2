@@ -3,10 +3,12 @@ PROGRAM main
     USE numerics
     USE haar_functions
     USE matrix
+    USE data_pb
 
     IMPLICIT NONE
     ! Déclaration des variables locales
     integer :: i, j
+    real(8) :: test
 
 
                     ! ------------------------------ !
@@ -19,7 +21,7 @@ PROGRAM main
         !Initialisation des variables
         CALL initialize_globals()
         
-        write(*, '(/,T5,A,/)') " Toutes les variables globales ont été initialisées avec succès !"
+        write(*, '(/,T25,A,/)') " Toutes les variables globales ont été initialisées avec succès !"
 
         ! Affichage de points de collocation
         ! write(*, '(/,T5,A,/)') "Points de collocation :"
@@ -65,8 +67,26 @@ PROGRAM main
 
 
                               ! -------------------------------- !
-                              !   Calcul de l'inconnue v(x,y,t)  !
+                              !   Calcul des inconnus (aij)      !
                               ! -------------------------------- !
+
+        WRITE(*, '(/,T25,A,/)') "Calcul des inconnus a_ij :"
+
+        ! do r = 1, N
+        !     do s = 1, N
+        !         idx = (r-1)*N + s
+        !         do i = 1, N
+        !             do j = 1, N
+        !                 A_mat(idx, (i-1)*N + j) = -epsilon * dt * h(i, r) * h(j, s)
+        !             end do
+        !         end do
+        !         A_mat(idx, idx) = A_mat(idx, idx) + 1.0_dp  ! Terme diagonal
+        !         B_vec(idx) = v_old(r, s)  
+        !     end do
+        ! end do
+
+
+        test = f(x_c(1), y_c(1))
 
 
         
@@ -120,18 +140,21 @@ PROGRAM main
         end function closest_index
 
         function compute_v(x, y, t) result(v_val)
+            use numerics
             implicit none
             real(dp), intent(in) :: x, y, t  ! Position et temps actuels
             real(dp) :: v_val                ! Valeur de v(x,y,t)
             
             ! Variables locales
             integer :: i, j, idx_x, idx_y
-            real(dp) :: delta_x, delta_y
+            real(dp) :: delta_x, delta_y, dx, dy
             real(dp) :: term1, term2, term3, term4, term5, wavelet_part
             
             !------------------------------------------
             ! 1. Calcul des pas spatiaux Δx et Δy
             !------------------------------------------
+            ! dx = (x_max - x_min)/N
+            ! dy = (y_max - y_min)/N
             delta_x = dx
             delta_y = dy
             
@@ -168,7 +191,7 @@ PROGRAM main
             wavelet_part = 0.0_dp
             do i = 1, N
                 do j = 1, N
-                    wavelet_part = wavelet_part + a_ij(i,j) * p2(i, closest_index(x, x_c)) * p2(j, closest_index(y, y_c))
+                    wavelet_part = wavelet_part + a_ij(i,j) * p2x(i, closest_index(x, x_c)) * p2y(j, closest_index(y, y_c))
                 end do
             end do
             
