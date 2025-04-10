@@ -7,10 +7,10 @@ MODULE numerics
       ! Paramètres de résolution et discrétisation
       !------------------------------------------
       integer, parameter :: dp = kind(1.d0)  ! Double précision
-      integer, parameter :: M = 2                      ! Niveau de résolution des ondelettes (2^M points)
-      integer, parameter :: N = 2 ** M                  ! Nombre total de points de collocation (N = 2*M)
-      real(dp) :: dt = 0.01d0                                   ! Pas de temps Δt
-      real(dp), parameter :: epsilon = 1.0d0            ! Coefficient de diffusion ε
+      integer, parameter :: M = 2**1                   ! Niveau de résolution des ondelettes (M^J points)
+      integer, parameter :: N = 2 * M                  ! Nombre total de points de collocation (N = 2*M)
+      real(dp) :: dt = 0.01d0                          ! Pas de temps Δt
+      real(dp), parameter :: epsilon = 1.0d0           ! Coefficient de diffusion ε
 
       !------------------------------------------
       ! Domaine spatial et temporel
@@ -28,9 +28,12 @@ MODULE numerics
       !------------------------------------------
       ! Fonctions et coefficients des ondelettes de Haar
       !------------------------------------------
-      real(dp), allocatable :: h(:,:)         ! Fonctions Haar h_i(x_c) [i, x]
-      real(dp), allocatable :: p1(:,:)        ! Intégrales premières p_{i,1}(x_c)
-      real(dp), allocatable :: p2(:,:)        ! Intégrales secondes p_{i,2}(x_c)
+      real(dp), allocatable :: hx(:,:)         ! Fonctions Haar h_i(x_c) [i, x]
+      real(dp), allocatable :: hy(:,:)         ! Fonctions Haar h_i(y_c) [i, y]
+      real(dp), allocatable :: p1x(:,:)       ! Intégrales premières p_{i,1}(x_c)
+      real(dp), allocatable :: p1y(:,:)       ! Intégrales premières p_{i,1}(y_c) 
+      real(dp), allocatable :: p2x(:,:)       ! Intégrales secondes p_{i,2}(x_c)
+      real(dp), allocatable :: p2y(:,:)       ! Intégrales secondes p_{i,2}(y_c) 
       real(dp), allocatable :: C(:)           ! Constantes d'intégration C_i = 1/(4m²)
 
       real(dp), allocatable :: a_ij(:,:)      ! Coefficients HWCM1 pour v_{xxyy} [i,j]
@@ -73,7 +76,7 @@ MODULE numerics
 
         ! Allocation des tableaux
         allocate(x_c(N), y_c(N), t_grid(num_points))
-        allocate(h(N, N), p1(N, N), p2(N, N), C(N))
+        allocate(hx(N, N), hy(N,N), p1x(N, N),p1y(N,N), p2x(N, N),p2y(N,N), C(N))
         allocate(a_ij(N, N), b_ij(N, N))
         allocate(phi(N, N), psi(N, N), f_exact(N, N))
         allocate(A_mat(N*N, N*N), B_vec(N*N), ipiv(N*N))
