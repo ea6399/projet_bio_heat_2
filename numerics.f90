@@ -34,6 +34,8 @@ MODULE numerics
       real(dp), allocatable :: p1y(:,:)       ! Intégrales premières p_{i,1}(y_c) 
       real(dp), allocatable :: p2x(:,:)       ! Intégrales secondes p_{i,2}(x_c)
       real(dp), allocatable :: p2y(:,:)       ! Intégrales secondes p_{i,2}(y_c) 
+      real(dp), allocatable :: u(:,:,:)       ! Inconnu u(x,y,t) [i,j,k]
+      real(dp), allocatable :: v(:,:,:)       ! Inconnu v(x,y,t) [i,j,k]
       real(dp), allocatable :: C(:)           ! Constantes d'intégration C_i = 1/(4m²)
 
       real(dp), allocatable :: a_ij(:,:)      ! Coefficients HWCM1 pour v_{xxyy} [i,j]
