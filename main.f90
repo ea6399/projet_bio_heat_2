@@ -10,6 +10,8 @@ PROGRAM main
       
       write(*, '(/,T5,A,/)') " Toutes les variables globales ont été initialisées avec succès !"
 
+      write(*, '(/,T5,A,/)') " Push test"
+
     
 
 END PROGRAM main
