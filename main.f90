@@ -38,6 +38,26 @@ PROGRAM main
       write(*, '(/,T5,A,/)') "Fonctions Haar :"
       call print_matrix(h)
 
+      ! Affichage des intégrales premières
+      write(*, '(/,T5,A,/)') "Intégrales premières :"
+      DO j = 1, N
+          DO i = 1, N
+              p1(i,j) = P_haar(x_c(j), i, 1, x_min, x_max, N)
+          END DO
+      END DO
+      call print_matrix(p1)
+
+      ! Affichage des intégrales secondes
+      write(*, '(/,T5,A,/)') "Intégrales secondes :"
+      DO j = 1, N
+          DO i = 1, N
+              p2(i,j) = P_haar(x_c(j), i, 2, x_min, x_max, N)
+          END DO
+      END DO
+      call print_matrix(p2)
+
+
+
       
 
     
