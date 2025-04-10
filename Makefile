@@ -1,9 +1,10 @@
 # Compiler and flags
 FC = gfortran
 FLAGS = -Wall -Wextra -O2
+LDLIBS = -llapack -lblas
 
 # Source files
-SOURCES = numerics.f90 matrix.f90 haar.f90 main.f90
+SOURCES = numerics.f90 data_pb.f90 matrix.f90 haar.f90 main.f90
 OBJECTS = $(SOURCES:.f90=.o)
 
 # Executable name
