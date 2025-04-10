@@ -7,7 +7,7 @@ MODULE numerics
       ! Paramètres de résolution et discrétisation
       !------------------------------------------
       integer, parameter :: dp = kind(1.d0)  ! Double précision
-      integer, parameter :: M = 4                      ! Niveau de résolution des ondelettes (2^M points)
+      integer, parameter :: M = 2                      ! Niveau de résolution des ondelettes (2^M points)
       integer, parameter :: N = 2 ** M                  ! Nombre total de points de collocation (N = 2*M)
       real(dp) :: dt = 0.01d0                                   ! Pas de temps Δt
       real(dp), parameter :: epsilon = 1.0d0            ! Coefficient de diffusion ε

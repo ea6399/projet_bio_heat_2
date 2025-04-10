@@ -1,6 +1,9 @@
 module haar_functions
+
+    USE numerics
+
     implicit none
-    integer, parameter :: dp = kind(1.0d0)
+
 contains
 
     recursive integer function factorial(n) result(res)
