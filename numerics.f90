@@ -11,6 +11,7 @@ MODULE numerics
       integer, parameter :: N = 2 * M                  ! Nombre total de points de collocation (N = 2*M)
       real(dp) :: dt = 0.01d0                          ! Pas de temps Δt
       real(dp), parameter :: epsilon = 1.0d0           ! Coefficient de diffusion ε
+      real(dp), parameter :: pi = atan(1.0d0) * 4.0d0   ! Constante π
 
       !------------------------------------------
       ! Domaine spatial et temporel
@@ -60,6 +61,7 @@ MODULE numerics
       real(dp), allocatable :: A_mat(:,:)    ! Matrice du système linéaire
       real(dp), allocatable :: B_vec(:)      ! Vecteur second membre
       integer, allocatable :: ipiv(:)        ! Pivots pour la résolution (LAPACK)
+      integer :: idx
 
 
 
