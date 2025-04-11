@@ -7,7 +7,7 @@ PROGRAM main
 
     IMPLICIT NONE
     ! Déclaration des variables locales
-    integer :: i, j
+    integer :: i, j, r, s
 
 
                     ! ------------------------------ !
@@ -69,57 +69,42 @@ PROGRAM main
                               !   Calcul des inconnus (aij)      !
                               ! -------------------------------- !
 
-        WRITE(*, '(/,T25,A,/)') "Calcul des inconnus a_ij :"
+        ! Initialisation de V
+        DO s = 1, N
+            DO r = 1, N
+                v_old(r,s,0) = initialize_v(x_c(r), y_c(s))
+            END DO
+        END DO
 
-        ! do r = 1, N
-        !     do s = 1, N
-        !         idx = (r-1)*N + s
-        !         do i = 1, N
-        !             do j = 1, N
-        !                 A_mat(idx, (i-1)*N + j) = -epsilon * dt * h(i, r) * h(j, s)
-        !             end do
-        !         end do
-        !         A_mat(idx, idx) = A_mat(idx, idx) + 1.0_dp  ! Terme diagonal
-        !         B_vec(idx) = v_old(r, s)  
-        !     end do
-        ! end do
+        write(*, '(/,T25,A,/)') "V initialisé."
 
-
-
+        ! Calcul des coefficients a_ij
 
         
 
+        WRITE(*, '(/,T25,A,/)') "Calcul des inconnus a_ij calculés"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        ! Résolution du système A * a = b
 
 
 
 
         contains
 
+        function initialize_v(x,y) result(val)
+            use numerics
+            implicit none
+            real(dp) :: val
+            real(dp), intent(in) :: x, y
+            
+            val = sin(pi*x) * sin(pi*y)
+
+        end function initialize_v
+
         function v_boundary_x0(x, y, t) result(val)
             real(dp), intent(in) :: x, y, t
             real(dp) :: val
-            ! y = 0 donc h_1(x,t)
+            ! Dirichlet,  x = 0 donc g_1(x,t)
             val = 0.0_dp  
         end function v_boundary_x0
 
@@ -130,13 +115,6 @@ PROGRAM main
             val = 0.0_dp  
         end function v_boundary_0y
 
-        function closest_index(x, grid) result(idx)
-            real(dp), intent(in) :: x
-            real(dp), intent(in) :: grid(:)
-            integer :: idx
-            idx = minloc(abs(grid - x), dim=1)
-        end function closest_index
-
         function compute_v(x, y, t) result(v_val)
             use numerics
             implicit none
@@ -144,27 +122,22 @@ PROGRAM main
             real(dp) :: v_val                ! Valeur de v(x,y,t)
             
             ! Variables locales
-            integer :: i, j, idx_x, idx_y
+            integer :: i, j
             real(dp) :: delta_x, delta_y, dx, dy
             real(dp) :: term1, term2, term3, term4, term5, wavelet_part
             
             !------------------------------------------
-            ! 1. Calcul des pas spatiaux Δx et Δy
+            ! 1. Calcul des pas spatiaux deltax et deltay
             !------------------------------------------
             ! dx = (x_max - x_min)/N
             ! dy = (y_max - y_min)/N
             delta_x = dx
             delta_y = dy
+
             
             !------------------------------------------
-            ! 2. Évaluation des termes aux limites (exemples)
+            ! 2. Évaluation des termes aux limites 
             !------------------------------------------
-            ! Supposons que v(x,0,t), v(0,y,t), etc. sont stockés dans des tableaux
-            ! ou calculés via des fonctions externes (à adapter selon votre cas)
-            
-            ! Indices des points voisins pour les différences finies
-            idx_x = min(floor(x/dx) + 1, N-1)
-            idx_y = min(floor(y/dy) + 1, N-1)
             
             ! Terme 1 : v(x,0,t) + y*(v(x,Δy,t) - v(x,0,t))/Δy
             term1 = v_boundary_x0(x, 0.0_dp, t) + y * (v_boundary_x0(x, delta_y, t) - v_boundary_x0(x, 0.0_dp, t)) / delta_y
@@ -183,13 +156,13 @@ PROGRAM main
             term5 = x * y * (v_boundary_0y(delta_x, delta_y, t) - v_boundary_0y(delta_x, 0.0_dp, t) &
                         - v_boundary_0y(0.0_dp, delta_y, t) + v_boundary_0y(0.0_dp, 0.0_dp, t)) / (delta_x * delta_y)
             
-            !------------------------------------------
-            ! 3. Partie ondelette : Σ a_ij p2_i(x) p2_j(y)
-            !------------------------------------------
+            !---------------------
+            ! 3. Partie ondelette :
+            !---------------------
             wavelet_part = 0.0_dp
             do i = 1, N
                 do j = 1, N
-                    wavelet_part = wavelet_part + a_ij(i,j) * p2x(i, closest_index(x, x_c)) * p2y(j, closest_index(y, y_c))
+                    wavelet_part = wavelet_part + a_ij(i,j) * p2x(i, j) * p2y(i, j)
                 end do
             end do
             

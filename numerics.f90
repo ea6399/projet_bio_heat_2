@@ -37,7 +37,9 @@ MODULE numerics
       real(dp), allocatable :: p2y(:,:)       ! Intégrales secondes p_{i,2}(y_c) 
       real(dp), allocatable :: u(:,:,:)       ! Inconnu u(x,y,t) [i,j,k]
       real(dp), allocatable :: v(:,:,:)       ! Inconnu v(x,y,t) [i,j,k]
+      real(dp), allocatable :: v_old(:,:,:)     ! Inconnu v(x,y,t-Δt) [i,j]
       real(dp), allocatable :: C(:)           ! Constantes d'intégration C_i = 1/(4m²)
+
 
       real(dp), allocatable :: a_ij(:,:)      ! Coefficients HWCM1 pour v_{xxyy} [i,j]
       real(dp), allocatable :: b_ij(:,:)      ! Coefficients HWCM2 pour u_{xxyy} [i,j]
@@ -81,9 +83,32 @@ MODULE numerics
         ! Allocation des tableaux
         allocate(x_c(N), y_c(N), t_grid(num_points))
         allocate(hx(N, N), hy(N,N), p1x(N, N),p1y(N,N), p2x(N, N),p2y(N,N), C(N))
-        allocate(a_ij(N, N), b_ij(N, N))
+        allocate(u(N, N, num_points), v(N, N, num_points), v_old(N, N, num_points))
+        allocate(a_ij(N,N), b_ij(N,N))
         allocate(phi(N, N), psi(N, N), f_exact(N, N))
         allocate(A_mat(N*N, N*N), B_vec(N*N), ipiv(N*N))
+
+        x_c = 0.0_dp
+        y_c = 0.0_dp
+        t_grid = 0.0_dp
+        hx = 0.0_dp
+        hy = 0.0_dp
+        p1x = 0.0_dp
+        p1y = 0.0_dp
+        p2x = 0.0_dp
+        p2y = 0.0_dp
+        u = 0.0_dp
+        v = 0.0_dp
+        v_old = 0.0_dp
+        a_ij = 0.0_dp
+        b_ij = 0.0_dp
+        phi = 0.0_dp
+        psi = 0.0_dp
+        f_exact = 0.0_dp
+        A_mat = 0.0_dp
+        B_vec = 0.0_dp
+        ipiv = 0
+        C = 0.0_dp
 
         ! Initialisation des points de collocation
         dx = (x_max - x_min)/N
